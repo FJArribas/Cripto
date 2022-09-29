@@ -11,6 +11,8 @@ int main (int argc, char *argv[])
     FILE *entrada, *salida;
     mpz_t a, b, d, r0, r1, r2, q;
 
+    /*
+
     if(argc <= 1 || argc > 12) // TODO: Comprobar que este es el número máximo de args
         printf("\nPrograma AFÍN ejecutado. Uso del programa:"
                "afin {-C | -D} {-m |Zm|} {-a N×} {-b N+} [-i filein] [-o fileout]"
@@ -25,7 +27,7 @@ int main (int argc, char *argv[])
     if(argc >= 2)
     {
         if (strcmp(argv[2], "-C") == 0)
-            cifra = 1;   // Cifra
+            cifra = 1;  // Cifra
         else
             cifra = 0;  // Descifra
 
@@ -36,24 +38,49 @@ int main (int argc, char *argv[])
 
     }
 
-    mpz_init(a);
-    mpz_init(b);
-    mpz_init(d);
-    mpz_init(r0);
-    mpz_init(r1);
-    mpz_init(r2);
-    mpz_init(q);
+    */
+
+    mpz_init (a);
+    mpz_init (b);
+    // mpz_init (d);
+    mpz_init (r0);
+    mpz_init (r1);
+    // mpz_init (r2);
+    mpz_init (q);
+
+    mpz_set_str (a, "26", 10);
+    mpz_set_str (b, "15", 10);
+
+    // mpz_set_str (a, str_a, 10);
+    // mpz_set_str (b, str_b, 10); 
 
 
+    /* Control de errores*/
+    if(mpz_cmp_ui (a, 0) == 1 && mpz_cmp_ui (b, 0) == 1  && mpz_cmp (a, b) == 1) // TODO Comparar que las funciones sean mpz
+    {
+        mpz_set(r0, a);
+        mpz_set(r1, b);
+        mpz_mod(q, r0, r1);
+    
+        while (mpz_cmp_ui (q, 0) == 1)
+        {
+            mpz_mod (q, r0, r1);     // q = r0 % r1
+            mpz_set (r0, r1);       // r0 = r1
+            mpz_set (r1, q);        // r1 = q
+        }
+    }
+    else
+        return NULL
 
-    mpz_set_str(a, str_a, 10), 
-    mpz_set_str(b, str_b, 10), 
+    mpz_clear (a);
+    mpz_clear (b);
+    mpz_clear (q);
+    mpz_clear (r0);
+    mpz_clear (r1);
 
-        /* Control de errores*/
 
-    if(a == 0 || b == 0  ||)
-    while (r != 0){
-
+    return (0);
+    }
     }
 
     return(0);

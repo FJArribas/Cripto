@@ -1,0 +1,2 @@
+Ejecutar para compilar:
+gcc -o Afin Afin.c -lgmp -L.

@@ -1,2 +1,4 @@
-Ejecutar para compilar:
+Para ejecutar realizar make, y luego ./<ejecutable>
+
+Ejecutar para compilar sin makefile:
 gcc -o Afin Afin.c -lgmp -L.

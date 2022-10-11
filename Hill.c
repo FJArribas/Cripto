@@ -60,17 +60,21 @@ void print_matrix(int **matrix, int size){
 }
 
 /* Funcion que obtiene cofactores  el valor de los cofactores */
-int** cofactor(int** array, int size, int row, int col){
+void cofactor(int** array, int size, int row, int col, int **cof){
 
     int matrix_ret[size][size];
     int i, j, k = 0, l = 0;
+
+    printf("\nThis is the matrix received\n");
+    print_matrix(array, size);
 
     // Obtenemos con loops cofactors y los devuelve
     for (i = 0;i < size;i++){
         for (j = 0;j < size;j++){
             if (i != row && j != col){
                 // l++;
-                matrix_ret[k][l] = array[i][j];
+
+                cof[k][l] = array[i][j];
                 l++;
                 if(l == size -1) // Si llegas fin columnas reseteas y empiezas nueva row
                     k++;
@@ -79,7 +83,8 @@ int** cofactor(int** array, int size, int row, int col){
         }
     }
 
-    return matrix_ret;
+    printf("\nThis is the cofactor created\n");
+    print_matrix(cof, size);
 }
 
 int determinant(int **matrix, int size){
@@ -107,7 +112,7 @@ int determinant(int **matrix, int size){
 
 int main(){
 
-    int det = 0, i, j, n = 1, h;
+    int det = 0, i, j, n = 1, m, h;
 
     // Determinante debe dar = 18
     int matrix1[3][3] = {
@@ -169,8 +174,8 @@ int main(){
 
     /* Freeing values of matrix 2 */
     for(i = 0; i < n; i++)
-		free((void *)array1[i]);
-	free((void *)array1);
+		free((void *)array2[i]);
+	free((void *)array2);
 
 
 
@@ -198,10 +203,33 @@ int main(){
     printf("\nThis is the determinant received of size 3 %d", det);
 
     /* Freeing values of matrix 3 */
-    for(i = 0; i < n; i++)
+    /*for(i = 0; i < n; i++)
 		free((void *)array1[i]);
 	free((void *)array1);
+    */
 
+
+
+    /************** Testing Cofactor *****************/
+
+
+    /* Getting cofactor of matrix 3 */
+    /* We create a matrix of 3 */
+    /*m = n - 1;
+    int **cof = malloc(m * sizeof(int *));
+	for(i = 0; i < m; i++)
+		cof[i] = malloc(m * sizeof(int));
+
+    j = 0;
+    for(i = 0; i < n; i++){
+        cofactor(array3, n, j, i, cof);
+        det += determinant(cof, m);
+    }*/
+
+    /* Freeing values of matrix 3 */
+    for(i = 0; i < n; i++)
+		free((void *)array3[i]);
+	free((void *)array3);
 
     return(0);
 }

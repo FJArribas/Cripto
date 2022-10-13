@@ -62,11 +62,8 @@ void print_matrix(int **matrix, int size){
 /* Funcion que obtiene cofactores  el valor de los cofactores */
 void cofactor(int** array, int size, int row, int col, int **cof){
 
-    int matrix_ret[size][size];
+    int met[size][size];
     int i, j, k = 0, l = 0;
-
-    printf("\nThis is the matrix received\n");
-    print_matrix(array, size);
 
     // Obtenemos con loops cofactors y los devuelve
     for (i = 0;i < size;i++){
@@ -75,21 +72,23 @@ void cofactor(int** array, int size, int row, int col, int **cof){
                 // l++;
 
                 cof[k][l] = array[i][j];
-                l++;
-                if(l == size -1) // Si llegas fin columnas reseteas y empiezas nueva row
+
+                l+=1;
+                if(l == size -1){ // Si llegas fin columnas reseteas y empiezas nueva row
                     k++;
                     l=0;
+                }
             }
         }
     }
 
-    printf("\nThis is the cofactor created\n");
-    print_matrix(cof, size);
+    //printf("\nThis is the cofactor created\n");
+    //print_matrix(cof, size);
 }
 
 int determinant(int **matrix, int size){
 
-    int det = 0, cof, i;
+    int det = 0, cof, i, j, m, aux, aux2;
     
     if(size == 1){
         det = matrix[0][0];
@@ -99,13 +98,41 @@ int determinant(int **matrix, int size){
         det = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
         return det;
     }
-    /*else {
-        printf("Entramos en else");
+    else {
+
+        /* Storing memory for the cofactor */
+        m = size-1;
+        int **cof = malloc(m * sizeof(int *));
+        for(i = 0; i < m; i++)
+            cof[i] = malloc(m * sizeof(int));
+
+        printf("Paso por else\n");
+
+        /* Starting loop with the cofactors */
+        j = 0;
         for(i = 0; i < size; i++){
-            cof = cofactor(matrix, size, 0, i); // 0 = row, i = column
-            det += determinant(cof, size-1);
+            cofactor(matrix, size, j, i, cof); // 0 = row, i = column
+            
+            printf("\nCofactor que obtenemos:\n");
+            print_matrix(cof, m);
+
+            aux = determinant(cof, m);
+            if(i%2==1){
+                aux *= -1;
+            }
+
+            det += matrix[j][i] * aux;
+            
+            //printf("Determinante = %d\n", det);
         }
-    }*/
+
+        /* Freeing values of cofactor*/
+        for(i = 0; i < m; i++)
+            free((void *)cof[i]);
+        free((void *)cof);
+
+        return det;
+    }
 
     return det;
 }
@@ -187,9 +214,10 @@ int main(){
 	for(i = 0; i < n; i++)
 		array3[i] = malloc(n * sizeof(int));
 
+    int k = 2;
     for(i=0;i<n;i++){
         for(j=0;j<n;j++){
-            array3[i][j] = i+j;
+            array3[i][j] = k*i+j+1;
         }
         printf("\n");
     }
@@ -203,33 +231,47 @@ int main(){
     printf("\nThis is the determinant received of size 3 %d", det);
 
     /* Freeing values of matrix 3 */
-    /*for(i = 0; i < n; i++)
-		free((void *)array1[i]);
-	free((void *)array1);
-    */
-
-
-
-    /************** Testing Cofactor *****************/
-
-
-    /* Getting cofactor of matrix 3 */
-    /* We create a matrix of 3 */
-    /*m = n - 1;
-    int **cof = malloc(m * sizeof(int *));
-	for(i = 0; i < m; i++)
-		cof[i] = malloc(m * sizeof(int));
-
-    j = 0;
-    for(i = 0; i < n; i++){
-        cofactor(array3, n, j, i, cof);
-        det += determinant(cof, m);
-    }*/
-
-    /* Freeing values of matrix 3 */
     for(i = 0; i < n; i++)
 		free((void *)array3[i]);
 	free((void *)array3);
+
+
+    /************* MATRIX OF SIZE = 4 *************/
+    int array5[16] = {1, 2, 3, 4, 3, 3, 5, 6, 5, 3, 7, 8, 7, 3, 9, 1};
+
+    /*
+    1 2 3 4
+    2 3 4 3
+    3 4 3 3 
+    4 3 3 5   det = 29
+    */
+
+    n = 4;
+    /* We create a matrix of 4 */
+    int **array4 = malloc(n * sizeof(int *));
+	for(i = 0; i < n; i++)
+		array4[i] = malloc(n * sizeof(int));
+
+    k = 2;
+    for(i=0;i<n;i++){
+        for(j=0;j<n;j++){
+            array4[i][j] = array5[i+j];
+        }
+        printf("\n");
+    }
+
+    /* Printing values of matrix 4 */
+    printf("This is matrix of 4 size\n");
+    print_matrix(array4, n);
+
+    det = determinant(array4, n);
+
+    printf("\nThis is the determinant received of size 4 %d", det);
+
+    /* Freeing values of matrix 4 */
+    for(i = 0; i < n; i++)
+		free((void *)array4[i]);
+	free((void *)array4);
 
     return(0);
 }

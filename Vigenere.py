@@ -1,11 +1,14 @@
 import argparse
 import sys
 
-def cifradoVigenere(string1, key):
-
-    dicc = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+DICC = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
     "l", "m", "n", "ñ", "o", "p", "q", "r", "s", "t", "u", "v",
     "w", "x", "y", "z"]
+
+def cifradoVigenere(string1, key):
+
+    # Ponemos todas las letras en lower case
+    string1.lower()
 
     string2 = ""
     i = 0
@@ -16,13 +19,13 @@ def cifradoVigenere(string1, key):
             continue
 
         # Obtenemos valor index
-        val = dicc.index(letter)
+        val = DICC.index(letter)
 
         #Valor de letra + key modulo 27
-        new_val = (val + dicc.index(key[i])) % 27
+        new_val = (val + DICC.index(key[i])) % 27
 
         # Vamos añadiendo valores a solucion  
-        string2 += dicc[new_val]
+        string2 += DICC[new_val]
         
         # Iteramos por toda la clave infinitivamente
         i = (i + 1) % len(key)
@@ -30,6 +33,31 @@ def cifradoVigenere(string1, key):
     return string2
 
 def descifradoVigenere(string1, key):
+
+    # Ponemos todas las letras en lower case
+    string1.lower()
+
+    string2 = ""
+    i = 0
+    for letter in string1:
+        
+        # Evitamos los espacios
+        if letter == ' ':
+            continue
+
+        # Obtenemos valor index
+        val = DICC.index(letter)
+
+        #Valor de letra + key modulo 27
+        new_val = (val - DICC.index(key[i])) % 27
+
+        # Vamos añadiendo valores a solucion  
+        string2 += DICC[new_val]
+        
+        # Iteramos por toda la clave infinitivamente
+        i = (i + 1) % len(key)
+
+    return string2
 
     return string1
 
@@ -44,8 +72,6 @@ if __name__ == '__main__':
     parser.add_argument("-o", dest="-o", nargs="?", default="terminal", help="Es para especificar un archivo para el output")
 
     args = vars(parser.parse_args())
-
-    #string1.lower()
 
     # Control de errores
     if args["-k"] is None:

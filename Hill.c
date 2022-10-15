@@ -2,50 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-void getCofactor(vector<vector<int> > &a, vector<vector<int> > &temp, int p, int q, int n){ 
-    int i=0,j=0; 
-    for(int row=0;row<n;row++){ 
-        for(int col=0;col<n;col++){ 
-            if(row!=p&&col!=q){ 
-                temp[i][j++] = a[row][col]; 
-                if (j==n-1){ 
-                    j=0; 
-                    i++; 
-                } 
-            } 
-        } 
-    } 
-}
-int determinant(vector<vector<int> > &a, int n, int N){ 
-    int D = 0;
-    if(n==1) 
-        return a[0][0]; 
-    vector<vector<int> > temp(N, vector<int>(N));
-    int sign = 1;
-    for(int f=0;f<n;f++){ 
-        getCofactor(a, temp, 0, f, n); 
-        D += sign * a[0][f] * determinant(temp, n - 1, N); 
-        sign = -sign; 
-    }
-    return D; 
-} 
-void adjoint(vector<vector<int> > &a,vector<vector<int> > &adj,int N){ 
-    if(N == 1){ 
-        adj[0][0] = 1; 
-        return; 
-    } 
-    int sign = 1;
-    vector<vector<int> > temp(N, vector<int>(N));
-    for(int i=0;i<N;i++){ 
-        for(int j=0;j<N;j++){ 
-            getCofactor(a, temp, i, j, N); 
-            sign = ((i+j)%2==0)? 1: -1; 
-            adj[j][i]= (sign)*(determinant(temp, N-1 , N)); 
-        } 
-    } 
-}
-*/
 
 void print_matrix(int **matrix, int size){
 
@@ -53,9 +9,35 @@ void print_matrix(int **matrix, int size){
 
     for(i=0;i<size;i++){
         for(j=0;j<size;j++){
-            printf("%d", matrix[i][j]);
+            printf(" %d ", matrix[i][j]);
         }
         printf("\n");
+    }
+}
+
+
+void print_matrixd(double **matrix, int size){
+
+    int i, j;
+
+    for(i=0;i<size;i++){
+        for(j=0;j<size;j++){
+            printf(" %lf ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+
+void matrix_multiply(int **matrix, int size, double num, double **inv){
+
+    int i, j;
+
+    for(i=0;i<size;i++){
+        for(j=0;j<size;j++){
+            inv[i][j] = matrix[i][j] * num;
+            //printf("\nValor modificado de pos [%d][%d] = %lf", i, j, inv[i][j]);
+        }
     }
 }
 
@@ -206,9 +188,11 @@ void adjoint(int **matrix, int size, int **adj){
 
 
 
+
 int main(){
 
     int det = 0, i, j, n = 1, m, h;
+    double aux;
 
     // Determinante debe dar = 18
     int matrix1[3][3] = {
@@ -242,7 +226,6 @@ int main(){
     for(i = 0; i < n; i++)
 		free((void *)array1[i]);
 	free((void *)array1);
-
 
 
     /************* MATRIX OF SIZE = 2 *************/
@@ -343,7 +326,6 @@ int main(){
 
     printf("\nThis is the determinant received of size 4 %d", det);
 
-
     /* Creamos matriz de tamano 4 para matriz adjunta */
     int **adj = malloc(n * sizeof(int *));
 	for(i = 0; i < n; i++)
@@ -355,10 +337,36 @@ int main(){
     printf("\nImprimiendo matriz adjunta\n");
     print_matrix(adj, n);
 
+
+    /******************* MATRIZ INVERSA *********************/
+
+    /* Los valores de determinante y adjunta ya los obtuvimos antes
+        estan en det, y adj, con ellos obtenemos inversa */
+    
+    
+    /* Creamos matriz de tamano 4 para matriz adjunta */
+    double **inv = malloc(n * sizeof(double *));
+	for(i = 0; i < n; i++)
+		inv[i] = malloc(n * sizeof(double));
+
+    double x = 1;
+    aux = x/det;
+
+    printf("\nValor de 1/determinante = %lf\n", aux);
+
+    matrix_multiply(adj, n, aux, inv);
+
+    printf("\nImprimiendo valor de la matriz inversa\n");
+    print_matrixd(inv, n);
+
+
     /* Freeing values of matrix 4 */
     for(i = 0; i < n; i++)
 		free((void *)array4[i]);
 	free((void *)array4);
 
     return(0);
+
+
+
 }

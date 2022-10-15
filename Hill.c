@@ -59,6 +59,7 @@ void print_matrix(int **matrix, int size){
     }
 }
 
+
 /* Funcion que obtiene cofactores  el valor de los cofactores */
 void cofactor(int** array, int size, int row, int col, int **cof){
 
@@ -85,6 +86,7 @@ void cofactor(int** array, int size, int row, int col, int **cof){
     //printf("\nThis is the cofactor created\n");
     //print_matrix(cof, size);
 }
+
 
 int determinant(int **matrix, int size){
 
@@ -136,6 +138,73 @@ int determinant(int **matrix, int size){
 
     return det;
 }
+
+
+void adjoint(int **matrix, int size, int **adj){
+
+    int m, i, j, cof, aux;
+
+    if(size == 1){
+        adj[0][0] = matrix[0][0];
+        return;
+    }
+    else if (size == 2){
+
+        /* Los valores que se mantienen positivos */
+        adj[0][0] = matrix[1][1];
+        adj[1][1] = matrix[0][0];
+
+        /* Los valores que cambian de signo */
+        adj[0][1] = -matrix[1][0];
+        adj[1][0] = -matrix[0][1];
+
+        return;
+    }
+    else {
+
+        /* Storing memory for the cofactor */
+        m = size-1;
+        int **cof = malloc(m * sizeof(int *));
+        for(i = 0; i < m; i++)
+            cof[i] = malloc(m * sizeof(int));
+
+        printf("Paso por else\n");
+
+        /* Starting loop with the cofactors */
+        for(i = 0; i < size; i++){
+
+            for(j = 0; j < size; j++){
+
+                /* Obtenemos todos los cofactores de la matriz */
+                cofactor(matrix, size, j, i, cof); // j=row i=col
+                
+                printf("\nCofactor que obtenemos:\n");
+                print_matrix(cof, m);
+
+                /* Obtenemos determinante de los cofactores */
+                aux = determinant(cof, m);
+
+                /* Cambiamos signo en suma de indices impar */
+                if((i+j)%2==1){
+                    aux *= -1;
+                }
+
+                /* Insertamos valores en matriz adjunta */
+                adj[j][i] = aux;
+            }
+        }
+
+        /* Freeing values of cofactor*/
+        for(i = 0; i < m; i++)
+            free((void *)cof[i]);
+        free((void *)cof);
+
+        return;
+    }
+}
+
+
+
 
 int main(){
 
@@ -239,11 +308,17 @@ int main(){
     /************* MATRIX OF SIZE = 4 *************/
     int array5[16] = {1, 2, 3, 4, 3, 3, 5, 6, 5, 3, 7, 8, 7, 3, 9, 1};
 
-    /*
+    /* 
     1 2 3 4
     2 3 4 3
     3 4 3 3 
     4 3 3 5   det = 29
+
+    matriz adjunta de matriz anterior:
+    -17  9  -8   13
+    -9  -15  23 -12
+    -8   23 -14  1
+    13  -12  1   2
     */
 
     n = 4;
@@ -267,6 +342,18 @@ int main(){
     det = determinant(array4, n);
 
     printf("\nThis is the determinant received of size 4 %d", det);
+
+
+    /* Creamos matriz de tamano 4 para matriz adjunta */
+    int **adj = malloc(n * sizeof(int *));
+	for(i = 0; i < n; i++)
+		adj[i] = malloc(n * sizeof(int));
+
+    adjoint(array4, n, adj);
+
+    /* Imprimimos matriz adjunta */
+    printf("\nImprimiendo matriz adjunta\n");
+    print_matrix(adj, n);
 
     /* Freeing values of matrix 4 */
     for(i = 0; i < n; i++)

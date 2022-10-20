@@ -1,0 +1,8 @@
+euclides(a, b, q);
+    gmp_printf("\nThis is the value returned by euclides %Zd", q);
+
+    euclides_extended(a, b, u, v);
+    gmp_printf("\nThese are the values returned by euclides extended u = %Zd v = %Zd", u, v); 
+
+    return (0);
+}

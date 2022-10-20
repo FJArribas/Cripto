@@ -180,7 +180,7 @@ char *cifrar (mpz_t a, mpz_t b, mpz_t m, char *p, int len)
 			mpz_add (y, y, aux);	// Asignamos la letra a cada numero (0-25 = A-Z)
 			
 			mpz_get_str (ascii, 10, y);
-		
+			
 			cifrado[i] = atoi(ascii);
 
 		}					
@@ -242,6 +242,7 @@ char * descifrar (mpz_t a, mpz_t b, mpz_t m, mpz_t inverso, char *q, len)
 			mpz_add (x, x, aux);	// Asignamos la letra a cada numero (0-25 = A-Z)
 
 			mpz_get_str (ascii, 10, x);
+			
 			descifrado[i] = atoi(ascii);
 
 		}					

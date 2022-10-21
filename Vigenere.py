@@ -59,7 +59,8 @@ def descifradoVigenere(string1, key):
 
     return string2
 
-    return string1
+
+#### TO DO testear que funciona con lectura de archivos
 
 if __name__ == '__main__':
 

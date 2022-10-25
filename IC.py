@@ -18,7 +18,7 @@ DICC_EN = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
     "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v",
     "w", "x", "y", "z"]
 
-ABEC_ES = 26
+ABEC_EN = 26
 
 TABLE_EN = {"a":8.04, "b":1.54, "c":3.06, "d":3.99, "e":12.51, "f":2.30,
     "g":1.96, "h":5.49, "i":7.26, "j":0.16, "k":0.67, "l":4.14, "m":2.53,
@@ -50,26 +50,105 @@ def euclides(values):
     return a
 
 
+"""
+def encrypt(plaintext,key):
+ciphertext = ''
+for i in range(len(plaintext)):
+p = ALPHABET.index(plaintext[i])
+k = ALPHABET.index(key[i%len(key)])
+c = (p + k) % 26
+ciphertext += ALPHABET[c]
+return ciphertext
+
+def decrypt(ciphertext,key):
+plaintext = ''
+for i in range(len(ciphertext)):
+p = ALPHABET.index(ciphertext[i])
+k = ALPHABET.index(key[i%len(key)])
+c = (p - k) % 26
+plaintext += ALPHABET[c]
+return plaintext
+"""
+
+
 def ic_key_size(string1, size):
 
     # Para guardar el numero de elementos que se repiten de cada uno
     c = []
     ic = []
 
-    # Iteramos por el numero de caracteres utilizados
+    length = len(string1)
+    ic_val = 0
+    
+    print("Length de texto", length)
+
+    # Iteramos por todas las posibles coincidencias
     for i in range(0, size):
 
-        print("Iteracion numero",i)
+        # Inicializamos a 0
+        c.append(0)
+        ic_count = 0
+        
+        # Iteramos por los caracteres de size en size
+        for j in range(size+i, length, size):
 
-        # Obtenemos el numero de cada uno de ellos
-        c.append(string1.count(string1[i]))
+            # Si el caracter es igual sumamos una coincidencia
+            if string1[j] == string1[i]:
+                c[i] += 1
+                print("Valor c[",i,"] =", c[i], "letra", string1[i], "en pos", j)
 
-        # Obtenemos el indice de coincidencia
-        ic.append(c[i]*(c[i]-1) / (ABEC_ES * (ABEC_ES-1)))
+            ic_count += 1
 
-        print("Valores de count del elemento", string1[i], c[i])
+        print("Letra", string1[i], "aparece", c[i], "veces, de ", ic_count, "posibilidades")
+        
+        # Calculamos indice de coincidencia de cada uno
+        ic_aux = c[i]*(c[i]-1) / (ic_count * (ic_count-1))
+        
+        # Guardamos cada uno para mostrarlos
+        ic.append(ic_aux) # multiplicado por 26?
+        
+        # Sumamos todos los indices de coincidencia
+        ic_val += ic_aux
+
+    # Obtenemos indice de coincidencia total
+    ic_val = ic_val/size
+
+    print("IC total", ic_val/size)
 
     return ic
+
+    """for char in string1[:size]:
+
+        # Anadimos el numero de veces que aparece
+        ic_char = string1[size:].count(char)
+        c.append(ic_char)
+
+        ic_val += ic_char * (ic_char - 1)
+        ic_count += ic_char
+
+    for val in c:
+
+        # Calculamos el indice de coincidencia
+        ic.append((val / length) * ((val - 1) / (length-1)))
+
+    ic_val = ic_val / (ic_count * (ic_count - 1))
+    print(ic)
+    print(" Valor de la suma de todo", ic_val)"""
+
+
+    """def ic(self):
+    num = 0.0
+    den = 0.0
+    for val in self.count.values():
+        i = val
+        num += i * (i - 1)
+        den += i
+    if (den == 0.0):
+        return 0.0
+    else:
+        return num / ( den * (den - 1))"""
+
+    
         
         
 def kasiki_key_size(string1, size):
@@ -154,9 +233,9 @@ if __name__ == '__main__':
 
     n = 3
     # n es el tamano de la coincidencia buscada
-    num = kasiki_key_size(string, n)
+    # num = kasiki_key_size(string, n)
 
-    print("Este es el mcd y probable tamano de clave", num)
+    #print("Este es el mcd y probable tamano de clave", num)
 
     ## TO DO Obtener tamano de clave con indice de coincidencias
     

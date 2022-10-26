@@ -306,21 +306,18 @@ int main (int argc, char *argv[])
 {
     int tam, i = 1;
     unsigned long int h = 100;
-    char *msg, *c, *d;
+    char *x, *c, *d;
     FILE *entrada, *salida;
-    mpz_t a, b, x, y;
+    mpz_t a, b, y, m;
 
-    /* Declaration of variables */
     mpz_init (a);
     mpz_init (b);
-    mpz_init (x);
     mpz_init (y);
+    mpz_init (m);
 
-    mpz_set_str(m, "26", 10); // Inglés, 27 es
-
-
-    mpz_set_str (a, "721", 10);
-    mpz_set_str (b, "488", 10);
+    // mpz_set_str(m, "26", 10); // Inglés, 27 es
+    // mpz_set_str (a, "721", 10);
+    // mpz_set_str (b, "488", 10);
 
     if(argc <= 8 || argc > 12)
     {
@@ -336,6 +333,10 @@ int main (int argc, char *argv[])
     }
     else
     {
+        mpz_set_str(a, argv[5], 10);
+        mpz_set_str(b, argv[7], 10);
+        mpz_set_str(m, argv[3], 10);
+
         if (strcmp(argv[1], "-C") == 0 || strcmp(argv[1], "-c") == 0) // Cifra
         {
             if ((argc > 8) && ((strcmp(argv[8], "-i") == 0 || strcmp(argv[8], "-I") == 0))) // Entrada por fichero
@@ -350,18 +351,18 @@ int main (int argc, char *argv[])
                 fseek (entrada, 0, SEEK_END);
                 tam = ftell (entrada);
                 rewind (entrada);
-                msg = malloc ((tam + 1) * sizeof (char));
-                fread (msg, 1, tam, entrada);
+                x = malloc ((tam + 1) * sizeof (char));
+                fread (x, 1, tam, entrada);
                 fclose (entrada);
             }
             else    // Entrada por teclado
             {
                 printf ("\nIntroducir entrada: ");
-                scanf ("%m[^\n]%*c", &msg);
-                tam = strlen (msg);
+                scanf ("%m[^\n]%*c", &x);
+                tam = strlen (x);
             }
 
-            c = cifrar (a, b, 26, msg, tam)
+            c = cifrar (a, b, m, x, tam)
             
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
@@ -388,8 +389,6 @@ int main (int argc, char *argv[])
                 fclose (salida);
             }
             printf("\n");
-            free (c);
-            free (msg);
         }
         else if (strcmp(argv[1], "-D") == 0 || strcmp(argv[1], "-d") == 0) // Descifra
         {
@@ -399,26 +398,26 @@ int main (int argc, char *argv[])
                 if (entrada == NULL)
                 {
                     printf("Error al abrir el fichero de entrada\n");
-                    return -1;                    
+                    return -1;
                 }
 
                 fseek (entrada, 0, SEEK_END);
                 tam = ftell (entrada);
                 rewind (entrada);
-                msg = malloc ((tam + 1) * sizeof (char));
-                fread (msg, 1, tam, entrada);
+                x = malloc ((tam + 1) * sizeof (char));
+                fread (x, 1, tam, entrada);
                 fclose (entrada);
             }
             else    // Entrada por teclado
             {
                 printf ("\nIntroducir entrada: ");
-                scanf ("%m[^\n]%*c", &msg);
-                tam = strlen (msg);
+                scanf ("%m[^\n]%*c", &x);
+                tam = strlen (x);
             }
 
             /*Obtenemos el inverso multiplicativo*/
-            inverso (a, msg, y)
-            d = descifrar (a, b, msg, y, msg, tam)
+            obtener_inverso (a, m, y);
+            d = descifrar (a, b, m, y, x, tam);
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
             {
@@ -444,14 +443,21 @@ int main (int argc, char *argv[])
                 fclose (salida);
             }
             printf("\n");
-            free (d);
-            free (msg);
 
         }
         else
         {
             printf("\nError en los parámetros\n");
         }
+
+    free(c);
+    free(d);
+    free(x);
+
+    mpz_clear(a);
+    mpz_clear(b);
+    mpz_clear(m);
+    mpz_clear(y);
     }
 
     return 0;

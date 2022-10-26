@@ -177,15 +177,14 @@ void obtener_inverso (mpz_t a, mpz_t m, mpz_t t)
         mpz_sub (r, m_aux, r);
     }
 
-    /*if(a_aux!=1){*/
-    if (mpz_cmp(a_aux, uno) != 0)
+    if (mpz_cmp (a_aux, uno) != 0)
     {
-        gmp_printf ("%Zd no tiene inverso mod %Zd\n", a, m);
-        mpz_set(t, cero);
+		mpz_set(t, cero);
+        printf ("%Zd no tiene inverso mod %Zd\n", a, m);
     }
     else
     {
-        gmp_printf ("Inverso de %Zd mod %Zd = %Zd\n", a, m, t);
+        printf ("Inverso de %Zd mod %Zd = %Zd\n", a, m, t);
     }
 
     mpz_clear (q);
@@ -314,18 +313,21 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
             if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
                 p_perm[i] = p[i];
             else // Es una letra - Asociamos cada elemento a su permutacion i
-                p_perm[i] = (27 - aux - 64)) + 64;
+                p_perm[i] = (26 - aux - 64) + 64; // 27 = ES, 26 = EN
         }
     }
     // Permutacion dada por el usuario
-    else if (numargs > 9 && strcmp(args[8], "-p") == 0)
+    else if (numargs > 9 && ((strcmp(args[8], "-p") == 0) || (strcmp(args[8], "-P") == 0)))
     {
-        for (i = 9, j = 0; i < numargs; i++, j++)
+		j = 0;
+        for (i = 9; i < numargs; i++)
+        {
             perm[j] = atoi(args[i]);
+            j++;
+        }
 
-        /* El resto de elementos se quedan como estan */
-        for (j = j; j < atoi(args[3]); j++)
-            perm[j] = j+1;
+        for (j = j; j < atoi(args[3]); j++) // Los otros elementos no cambian
+            perm[j] = j + 1;
 
         for(i = 0; i < tam; i++)
         {
@@ -336,14 +338,17 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
                 p_perm[i] = perm[aux - 65] + 64;
         }
     }
-    else if (numargs > 11 && strcmp(args[10], "-p") == 0)
+    else if (numargs > 11 && ((strcmp(args[10], "-p") == 0) || (strcmp(args[10], "-P") == 0))) == 0)
     {
-        for(i = 11, j = 0; i < numargs; i++, j++)
+        j = 0;
+        for(i = 11; i < numargs; i++)
+        {
             perm[j] = atoi(args[i]);
+            j++;
+        }
 
-        /* El resto de elementos se quedan como estan */
-        for (j = j; j < atoi(args[3]); j++)
-            perm[j] = j+1;
+        for (j = j; j < atoi(args[3]); j++) // Los otros elementos no cambian
+            perm[j] = j + 1;
 
         for(i = 0; i < tam; i++)
         {
@@ -354,14 +359,17 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
                 p_perm[i] = perm[aux - 65] + 64;
         }
     }
-    else if (numargs > 13 && strcmp(args[12], "-p") == 0)
+    else if (numargs > 13 && ((strcmp(args[12], "-p") == 0) || (strcmp(args[12], "-P") == 0)))
     {
-        for(i = 13, j = 0; i < numargs; i++, j++)
+        j = 0;
+        for(i = 13; i < numargs; i++)
+        {
             perm[j] = atoi(args[i]);
+            j++;
+        }
 
-        /* El resto de elementos se quedan como estan */
-        for (j = j; j < atoi(args[3]); j++)
-            perm[j] = j+1;
+        for (j = j; j < atoi(args[3]); j++) // Los otros elementos no cambian
+            perm[j] = j + 1;
 
         for(i = 0; i < tam; i++)
         {
@@ -372,7 +380,7 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
                 p_perm[i] = perm[aux - 65] + 64;
         }
     }
-    // Permutacion por defecto: darle la vuelta al alfabeto
+    // Permutacion no dada por el usuario - Invertimos alfabeto
     else
     {
         for(i = 0; i < tam; i++)
@@ -380,7 +388,7 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
             aux = toupper(p[i]);
             if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
                 p_perm[i] = p[i];
-            else  // Es una letra - Asociamos cada elemento a su permutacion i
+            else // Es una letra - Asociamos cada elemento a su permutacion i
                 p_perm[i] = (27 - aux - 64)) + 64;
         }
     }
@@ -391,23 +399,21 @@ int main (int argc, char *argv[])
 {
     int tam, i = 1;
     unsigned long int h = 100;
-    char *msg, *c, *d;
+    int *perm;
+    char *x, *c, *d, *perm_aux;
     FILE *entrada, *salida;
-    mpz_t a, b, x, y;
+    mpz_t a, b, y, m;
 
-    /* Declaration of variables */
     mpz_init (a);
     mpz_init (b);
-    mpz_init (x);
     mpz_init (y);
+    mpz_init (m);
 
-	mpz_set_str(m, "26", 10); // Inglés, 27 es
+    // mpz_set_str(m, "26", 10); // Inglés, 27 es
+    // mpz_set_str (a, "721", 10);
+    // mpz_set_str (b, "488", 10);
 
-
-    mpz_set_str (a, "721", 10);
-    mpz_set_str (b, "488", 10);
-
-    if(argc <= 8 || argc > 12)
+    if(argc < 8)
     {
         printf("\nPrograma AFÍN ejecutado. Uso del programa:\n"
                "afin {-C | -D} {-m |Zm|} {-a N×} {-b N+} [-i filein] [-o fileout] [-p perm1 ...]\n"
@@ -421,6 +427,13 @@ int main (int argc, char *argv[])
     }
     else
     {
+        mpz_set_str(a, argv[5], 10);
+        mpz_set_str(b, argv[7], 10);
+        mpz_set_str(m, argv[3], 10);
+
+        perm_aux = malloc (MAX_LEN * sizeof(char));
+        perm = malloc (atoi(argv[3]) * sizeof(int));
+
         if (strcmp(argv[1], "-C") == 0 || strcmp(argv[1], "-c") == 0) // Cifra
         {
             if ((argc > 8) && ((strcmp(argv[8], "-i") == 0 || strcmp(argv[8], "-I") == 0))) // Entrada por fichero
@@ -435,18 +448,22 @@ int main (int argc, char *argv[])
                 fseek (entrada, 0, SEEK_END);
                 tam = ftell (entrada);
                 rewind (entrada);
-                msg = malloc ((tam + 1) * sizeof (char));
-                fread (msg, 1, tam, entrada);
+                x = malloc ((tam + 1) * sizeof (char));
+                fread (x, 1, tam, entrada);
                 fclose (entrada);
             }
             else    // Entrada por teclado
             {
                 printf ("\nIntroducir entrada: ");
-                scanf ("%m[^\n]%*c", &msg);
-                tam = strlen (msg);
+                scanf ("%m[^\n]%*c", &x);
+                tam = strlen (x);
             }
 
-            c = cifrar (a, b, 26, msg, tam)
+            strcpy (perm_aux, "debug"); // DEBUG
+            permutar (argc, argv, x, perm_aux, perm);
+            printf("Mensaje con la permutación: %s\n", p_perm);
+
+            c = cifrar (a, b, m, perm_aux, tam)
             
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
@@ -473,8 +490,6 @@ int main (int argc, char *argv[])
                 fclose (salida);
             }
             printf("\n");
-            free (c);
-            free (msg);
         }
         else if (strcmp(argv[1], "-D") == 0 || strcmp(argv[1], "-d") == 0) // Descifra
         {
@@ -490,20 +505,20 @@ int main (int argc, char *argv[])
                 fseek (entrada, 0, SEEK_END);
                 tam = ftell (entrada);
                 rewind (entrada);
-                msg = malloc ((tam + 1) * sizeof (char));
-                fread (msg, 1, tam, entrada);
+                x = malloc ((tam + 1) * sizeof (char));
+                fread (x, 1, tam, entrada);
                 fclose (entrada);
             }
             else    // Entrada por teclado
             {
                 printf ("\nIntroducir entrada: ");
-                scanf ("%m[^\n]%*c", &msg);
-                tam = strlen (msg);
+                scanf ("%m[^\n]%*c", &x);
+                tam = strlen (x);
             }
 
             /*Obtenemos el inverso multiplicativo*/
-            inverso (a, msg, y)
-            d = descifrar (a, b, msg, y, msg, tam)
+            inverso (a, m, y);
+            d = descifrar (a, b, m, y, x, tam);
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
             {
@@ -529,14 +544,23 @@ int main (int argc, char *argv[])
                 fclose (salida);
             }
             printf("\n");
-            free (d);
-            free (msg);
-
         }
         else
         {
             printf("\nError en los parámetros\n");
         }
+
+    free(c);
+    free(d);
+    free(x);
+
+    free(perm_aux);
+    free(perm);
+
+    mpz_clear(a);
+    mpz_clear(b);
+    mpz_clear(m);
+    mpz_clear(y);
     }
 
     return 0;

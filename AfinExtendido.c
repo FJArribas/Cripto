@@ -225,8 +225,8 @@ void euclides (mpz_t a, mpz_t b, mpz_t q)
     while (mpz_cmp_ui (q, 0) == 1)
     {
         mpz_mod (q, r0, r1);     // q = r0 % r1
-        mpz_set (r0, r1);        // r0 = r1
-        mpz_set (r1, q);         // r1 = q
+        mpz_set (r0, r1);       // r0 = r1
+        mpz_set (r1, q);        // r1 = q
 
         //gmp_printf("%Zd ", r1);
     }
@@ -301,6 +301,91 @@ void euclides_extended (mpz_t a, mpz_t b, mpz_t u0, mpz_t v0)
     mpz_clear (q);
 }
 
+void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
+{
+    int i, j, aux;
+
+    // Permutacion no dada por el usuario - Invertimos alfabeto
+    if (numargs == 8)
+    {
+        for(i = 0; i < tam; i++)
+        {
+            aux = toupper(p[i]);
+            if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
+                p_perm[i] = p[i];
+            else // Es una letra - Asociamos cada elemento a su permutacion i
+                p_perm[i] = (27 - aux - 64)) + 64;
+        }
+    }
+    // Permutacion dada por el usuario
+    else if (numargs > 9 && strcmp(args[8], "-p") == 0)
+    {
+        for (i = 9, j = 0; i < numargs; i++, j++)
+            perm[j] = atoi(args[i]);
+
+        /* El resto de elementos se quedan como estan */
+        for (j = j; j < atoi(args[3]); j++)
+            perm[j] = j+1;
+
+        for(i = 0; i < tam; i++)
+        {
+            aux = toupper(p[i]);
+            if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
+                p_perm[i] = p[i];
+            else // Es una letra - Asociamos cada elemento a su permutacion i
+                p_perm[i] = perm[aux - 65] + 64;
+        }
+    }
+    else if (numargs > 11 && strcmp(args[10], "-p") == 0)
+    {
+        for(i = 11, j = 0; i < numargs; i++, j++)
+            perm[j] = atoi(args[i]);
+
+        /* El resto de elementos se quedan como estan */
+        for (j = j; j < atoi(args[3]); j++)
+            perm[j] = j+1;
+
+        for(i = 0; i < tam; i++)
+        {
+            aux = toupper(p[i]);
+            if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
+                p_perm[i] = p[i];
+            else // Es una letra - Asociamos cada elemento a su permutacion i
+                p_perm[i] = perm[aux - 65] + 64;
+        }
+    }
+    else if (numargs > 13 && strcmp(args[12], "-p") == 0)
+    {
+        for(i = 13, j = 0; i < numargs; i++, j++)
+            perm[j] = atoi(args[i]);
+
+        /* El resto de elementos se quedan como estan */
+        for (j = j; j < atoi(args[3]); j++)
+            perm[j] = j+1;
+
+        for(i = 0; i < tam; i++)
+        {
+            aux = toupper(p[i]);
+            if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
+                p_perm[i] = p[i];
+            else // Es una letra - Asociamos cada elemento a su permutacion i
+                p_perm[i] = perm[aux - 65] + 64;
+        }
+    }
+    // Permutacion por defecto: darle la vuelta al alfabeto
+    else
+    {
+        for(i = 0; i < tam; i++)
+        {
+            aux = toupper(p[i]);
+            if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
+                p_perm[i] = p[i];
+            else  // Es una letra - Asociamos cada elemento a su permutacion i
+                p_perm[i] = (27 - aux - 64)) + 64;
+        }
+    }
+}
+
 
 int main (int argc, char *argv[])
 {
@@ -316,7 +401,7 @@ int main (int argc, char *argv[])
     mpz_init (x);
     mpz_init (y);
 
-    mpz_set_str(m, "26", 10); // Inglés, 27 es
+	mpz_set_str(m, "26", 10); // Inglés, 27 es
 
 
     mpz_set_str (a, "721", 10);
@@ -325,7 +410,7 @@ int main (int argc, char *argv[])
     if(argc <= 8 || argc > 12)
     {
         printf("\nPrograma AFÍN ejecutado. Uso del programa:\n"
-               "afin {-C | -D} {-m |Zm|} {-a N×} {-b N+} [-i filein] [-o fileout]\n"
+               "afin {-C | -D} {-m |Zm|} {-a N×} {-b N+} [-i filein] [-o fileout] [-p perm1 ...]\n"
                "-C: El programa cifra\n"
                "-D: El programa descifra\n"
                "-m: Tamaño del espacio de texto cifrado\n"
@@ -399,7 +484,7 @@ int main (int argc, char *argv[])
                 if (entrada == NULL)
                 {
                     printf("Error al abrir el fichero de entrada\n");
-                    return -1;                    
+                    return -1;
                 }
 
                 fseek (entrada, 0, SEEK_END);

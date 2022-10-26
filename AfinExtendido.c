@@ -427,7 +427,7 @@ int main (int argc, char *argv[])
 
     if(argc <= 8)
     {
-        printf("\nPrograma AFÍN ejecutado. Uso del programa:\n"
+        printf("\nPrograma AFÍN EXTENDIDO ejecutado. Uso del programa:\n"
                "afin {-C | -D} {-m |Zm|} {-a N×} {-b N+} [-i filein] [-o fileout] [-p perm1 ...]\n"
                "-C: El programa cifra\n"
                "-D: El programa descifra\n"

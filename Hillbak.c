@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 void print_matrix(int **matrix, int size){
 
@@ -185,79 +184,23 @@ void adjoint(int **matrix, int size, int **adj){
     }
 }
 
-void cifrar (int **cipherMatrix, int **keyMatrix, int **messageVector, int n)
+void cifrar()
 {
-    int x, i, j;
-    for (i = 0; i < n; i++)
-    {
-        for (j = 0; j < 1; j++)
-        {
-            cipherMatrix[i][j] = 0;
-          
-             for (x = 0; x < n; x++)
-            {
-                cipherMatrix[i][j] +=
-                     keyMatrix[i][x] * messageVector[x][j];
-            }
-         
-            cipherMatrix[i][j] = cipherMatrix[i][j] % 26;
-        }
-    }
+    
 }
 
-char *hill (char *x, char *key, int n)
+void descifrar()
 {
-    int i, j, k = 0;
-    char *c= "";
-
-
-    // Key
-    int **keyMatrix = malloc(n * sizeof(int *));
-    for (i = 0; i < n; i++)
-        keyMatrix[i] = malloc (n * sizeof(int));
-
-    int **messageVector = malloc(n * sizeof(int *));
-    for (i = 0; i < n; i++)
-        messageVector[i] = malloc (n * sizeof(int));
-
-    int **cipherMatrix = malloc(n * sizeof(int *));
-    for (i = 0; i < n; i++)
-        cipherMatrix[i] = malloc (n * sizeof(int));
-
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            keyMatrix[i][j] = (key[k]) % 65;
-            k++;
-        }
-    }
-
-    // Generate vector for the message
-    for (int i = 0; i < n; i++)
-        messageVector[i][0] = (x[i]) % 65;
-
-    // Following function generates the encrypted vector
-    cifrar (cipherMatrix, keyMatrix, messageVector, n);
- 
-    // Generate the encrypted text from the encrypted vector
-    for (int i = 0; i < n; i++)
-    {
-        c += cipherMatrix[i][0] + 65;
-    }
-
-    return c;
+    
 }
 
 int main (int argc, char *argv[])
 {
-    int tam, i, j, aux;
-    int n, temp = 0;
-
-    int **msg;
+    int tam, i, j;
+    int n;
 
     unsigned long int h = 100;
-    char *x, *c, *d, *key;
+    char *x, *c, *d;
     FILE *entrada, *salida, *k;
 
     if(argc <= 8 || argc > 12)
@@ -294,7 +237,7 @@ int main (int argc, char *argv[])
             {
                 if (!fscanf(k, "%d", &matrix[i][j]))
                     break;
-                // printf("%d", matrix[i][j]); // DEBUG
+                printf("%d", matrix[i][j]); // DEBUG
             }
         }
         fclose(k);
@@ -323,9 +266,6 @@ int main (int argc, char *argv[])
                 scanf ("%m[^\n]%*c", &x);
                 tam = strlen (x);
             }
-
-            key = "AG";
-            c = hill (x, key, n);
 
             // c = cifrar (a, b, m, x, tam);
             
@@ -415,9 +355,9 @@ int main (int argc, char *argv[])
             printf("\nError en los parámetros\n");
         }
 
-    // free(c);
-    // free(d);
-    // free(x);
+    free(c);
+    free(d);
+    free(x);
     }
 
     return 0;

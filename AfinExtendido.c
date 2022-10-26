@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gmp.h>
+#include <ctype.h>
+
 
 #define MAX_LEN 1024
 
@@ -179,12 +181,13 @@ void obtener_inverso (mpz_t a, mpz_t m, mpz_t t)
 
     if (mpz_cmp (a_aux, uno) != 0)
     {
+        // No puede ser printf
 		mpz_set(t, cero);
-        printf ("%Zd no tiene inverso mod %Zd\n", a, m);
+        // DEBUG gmp_printf ("%Zd no tiene inverso mod %Zd\n", a, m);
     }
     else
     {
-        printf ("Inverso de %Zd mod %Zd = %Zd\n", a, m, t);
+        // DEBUG gmp_printf ("Inverso de %Zd mod %Zd = %Zd\n", a, m, t);
     }
 
     mpz_clear (q);
@@ -300,7 +303,7 @@ void euclides_extended (mpz_t a, mpz_t b, mpz_t u0, mpz_t v0)
     mpz_clear (q);
 }
 
-void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
+void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, int tam)
 {
     int i, j, aux;
 
@@ -313,8 +316,9 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
             if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
                 p_perm[i] = p[i];
             else // Es una letra - Asociamos cada elemento a su permutacion i
-                p_perm[i] = (26 - aux - 64) + 64; // 27 = ES, 26 = EN
+                p_perm[i] = (26 - (aux - 64)) + 64; // 27 = ES, 26 = EN
         }
+        // printf ("DEBUG5: %s", p_perm);
     }
     // Permutacion dada por el usuario
     else if (numargs > 9 && ((strcmp(args[8], "-p") == 0) || (strcmp(args[8], "-P") == 0)))
@@ -337,8 +341,9 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
             else // Es una letra - Asociamos cada elemento a su permutacion i
                 p_perm[i] = perm[aux - 65] + 64;
         }
+        // printf ("DEBUG4: %s", p_perm);
     }
-    else if (numargs > 11 && ((strcmp(args[10], "-p") == 0) || (strcmp(args[10], "-P") == 0))) == 0)
+    else if (numargs > 11 && ((strcmp(args[10], "-p") == 0) || (strcmp(args[10], "-P") == 0)))
     {
         j = 0;
         for(i = 11; i < numargs; i++)
@@ -358,6 +363,7 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
             else // Es una letra - Asociamos cada elemento a su permutacion i
                 p_perm[i] = perm[aux - 65] + 64;
         }
+        // printf ("DEBUG3: %s", p_perm);
     }
     else if (numargs > 13 && ((strcmp(args[12], "-p") == 0) || (strcmp(args[12], "-P") == 0)))
     {
@@ -379,6 +385,7 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
             else // Es una letra - Asociamos cada elemento a su permutacion i
                 p_perm[i] = perm[aux - 65] + 64;
         }
+        // printf ("DEBUG2: %s", p_perm);
     }
     // Permutacion no dada por el usuario - Invertimos alfabeto
     else
@@ -386,11 +393,16 @@ void permutar (int numargs, char **args, char *p, char *p_perm, int *perm, tam)
         for(i = 0; i < tam; i++)
         {
             aux = toupper(p[i]);
+            // printf ("DEBUGaux: %c\n", aux);
             if (aux < 65 || aux > 90) // Si no es una letra, no lo permutamos
                 p_perm[i] = p[i];
             else // Es una letra - Asociamos cada elemento a su permutacion i
-                p_perm[i] = (27 - aux - 64)) + 64;
+            {
+                p_perm[i] = (26 - (aux - 64)) + 64;
+                // printf ("DEBUG: %c\n", p_perm[i]);
+            }
         }
+        // printf ("DEBUG1: %s", p_perm);
     }
 }
 
@@ -413,7 +425,7 @@ int main (int argc, char *argv[])
     // mpz_set_str (a, "721", 10);
     // mpz_set_str (b, "488", 10);
 
-    if(argc < 8)
+    if(argc <= 8)
     {
         printf("\nPrograma AFÍN ejecutado. Uso del programa:\n"
                "afin {-C | -D} {-m |Zm|} {-a N×} {-b N+} [-i filein] [-o fileout] [-p perm1 ...]\n"
@@ -459,12 +471,14 @@ int main (int argc, char *argv[])
                 tam = strlen (x);
             }
 
-            strcpy (perm_aux, "debug"); // DEBUG
-            permutar (argc, argv, x, perm_aux, perm);
-            printf("Mensaje con la permutación: %s\n", p_perm);
+            strcpy (perm_aux, ""); // DEBUG
+            permutar (argc, argv, x, perm_aux, perm, tam);
+            // Debug
+            // printf("Mensaje con la permutación: %s\n", perm_aux);
+            obtener_inverso (a, m, y);
+            c = cifrar (a, b, m, perm_aux, tam);
+            // printf("Mensaje cifrado: %s\n", c);
 
-            c = cifrar (a, b, m, perm_aux, tam)
-            
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
             {
@@ -517,30 +531,39 @@ int main (int argc, char *argv[])
             }
 
             /*Obtenemos el inverso multiplicativo*/
-            inverso (a, m, y);
+            obtener_inverso (a, m, y);
+            // printf("Mensaje cifrado: %s\n", x);
             d = descifrar (a, b, m, y, x, tam);
+            // printf("Mensaje descifrado: %s\n", d);
+
+            strcpy (perm_aux, ""); // DEBUG
+            permutar (argc, argv, d, perm_aux, perm, tam);
+
+            // Debug
+            // printf("Mensaje con la permutación: %s\n", perm_aux);
+
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
             {
                 salida = fopen (argv[9], "w");
-                fputs (d, salida);
+                fputs (perm_aux, salida);
                 fclose (salida);
             }
             // Fichero -> Printf
-            else if ((argc < 11 ) && ((strcmp(argv[8], "-o") != 0 && strcmp(argv[8], "-O") != 0)))
+            else if ((argc < 11 ) && ((strcmp(argv[8], "-o") != 0 && (strcmp(argv[8], "-O")) != 0)))
             {
-                printf ("Mensaje descifrado: %s", d);
+                printf ("Mensaje descifrado: %s", perm_aux);
             }
             // Scanf -> Printf
             else if (argc == 8)
             {
-                printf ("Mensaje descifrado: %s", d);
+                printf ("Mensaje descifrado: %s", perm_aux);
             }
             // Fichero -> Fichero
             else
             {
                 salida = fopen (argv[11], "w");
-                fputs (d, salida);
+                fputs (perm_aux, salida);
                 fclose (salida);
             }
             printf("\n");

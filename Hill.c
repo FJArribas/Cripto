@@ -185,4 +185,8 @@ void adjoint(int **matrix, int size, int **adj){
 }
 
 // TO DO AÑADIR EL MAIN DE AFIN PARA QUE FUNCIONE
+int main (int argc, char *argv[])
+{
+    return 0;
+}
 

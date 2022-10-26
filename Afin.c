@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gmp.h>
+#include <ctype.h>
 
 #define MAX_LEN 1024
 
@@ -362,7 +363,7 @@ int main (int argc, char *argv[])
                 tam = strlen (x);
             }
 
-            c = cifrar (a, b, m, x, tam)
+            c = cifrar (a, b, m, x, tam);
             
             // Scanf -> Fichero
             if ((argc < 11 ) && ((strcmp(argv[8], "-o") == 0 || strcmp(argv[8], "-O") == 0)))
@@ -461,4 +462,4 @@ int main (int argc, char *argv[])
     }
 
     return 0;
-} 
+}

@@ -134,6 +134,8 @@ def analisis (string, cif):
 
 			# ret += 
 
+    return ret
+
 # seg-perf {-P | -I} [-i filein] [-o fileout]
 if __name__ == '__main__':
 

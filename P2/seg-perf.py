@@ -7,7 +7,6 @@ DICC_ES = "abcdefghijklmnñopqrstuvwxyz"
 
 ABEC_ES = 27
 
-# seg-perf {-P | -I} [-i filein] [-o fileout]
 # Método equiprobable -> seguridad perfecta
 # Método no equiprobable -> seguridad no perfecta
 
@@ -87,7 +86,55 @@ def no_equiprobable(size):
     return key
 
 
+# TODO
+# Analiza el texto cifrado, y devuelve una String con el formato descrito a continuación:
 
+# La salida consistira en las probabilidades Pp(x) de los elementos de texto plano, y las probabilidades
+# condicionadas Pp(x|y) para cada elemento de texto plano y de texto cifrado, con el siguiente formato:
+#
+# Pp(A) = %lf
+# Pp(B) = %lf
+# ...
+# Pp(Z) = %lf
+#
+# Pp(A|A) = %lf Pp(A|B) = %lf ... Pp(A|Z) = %lf
+# Pp(B|A) = %lf Pp(B|B) = %lf ... Pp(B|Z) = %lf
+# ...
+# Pp(Z|A) = %lf Pp(Z|B) = %lf ... Pp(Z|Z) = %lf
+
+def analisis (string, cif):
+    ret = ""
+
+    # Eliminamos todo lo que no sea una letra
+    regex = re.compile('[^a-zA-Z]')
+    cadena = regex.sub('', string)
+    # print (string)                                # DEBUG
+    # print (cadena)                                # DEBUG
+
+    # Diccionario de frecuencias con forma: ({'a': 2, 'b': 1, 'c': 1, 'd': 1, ...})
+    frecuencias_txt = Counter(cadena.lower())
+    frecuencias_cif = Counter(cif)
+
+    # for i in frecuencias:
+        # print (i, frecuencias[i])                 # DEBUG
+
+    # P(X)
+    # Pp(A), Pp(B), ..., Pp(Z)
+    for i in frecuencias_txt:
+        ret += "Pp(" + i + ") = " + str (frecuencias_txt[i] / len(cadena)) + "\n"
+        # print (i, frecuencias[i] / len(cadena))   # DEBUG
+
+    # Ocurrencias P(X, Y)
+
+	# Pp(X|Y) = P(X, Y)/Pp(Y)
+	for i in frecuencias_txt:
+		for j in frecuencias_txt:
+			# Se divide por Pp(Y)
+			# PpXY[i][j] = PpXY[i][j]/Py[j];
+
+			# ret += 
+
+# seg-perf {-P | -I} [-i filein] [-o fileout]
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Recibiendo argumentos...")
@@ -116,10 +163,10 @@ if __name__ == '__main__':
             string = f.read()
 
         if args["-P"]:
-            res = equiprobable (string)
+            res = cipher_cesar (string, size[0], True)
 
         else:
-            res = no_equiprobable (string)
+            res = cipher_cesar (string, size[0], False)
     # Si obtenemos desde la terminal
     else:
         # Obtenemos size de clave a usar
@@ -133,19 +180,7 @@ if __name__ == '__main__':
             string = args["-I"] # ??? Es como scanf?
             res = cipher_cesar (string, size[0], False)
 
-
-    # La salida consistir´a en las probabilidades Pp(x) de los elementos de texto plano, y las probabilidades
-    # condicionadas Pp(x|y) para cada elemento de texto plano y de texto cifrado, con el siguiente formato:
-    #
-    # Pp(A) = %lf
-    # Pp(B) = %lf
-    # ...
-    # Pp(Z) = %lf
-    #
-    # Pp(A|A) = %lf Pp(A|B) = %lf ... Pp(A|Z) = %lf
-    # Pp(B|A) = %lf Pp(B|B) = %lf ... Pp(B|Z) = %lf
-    # ...
-    # Pp(Z|A) = %lf Pp(Z|B) = %lf ... Pp(Z|Z) = %lf
+    res = analisis (string, cif)
 
     # Si se desea el output en un fichero
     if args["-o"] != "terminal":

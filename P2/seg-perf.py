@@ -1,5 +1,11 @@
 import argparse
 import sys
+from random import seed
+from random import random
+
+DICC_ES = "abcdefghijklmnñopqrstuvwxyz"
+
+ABEC_ES = 27
 
 # seg-perf {-P | -I} [-i filein] [-o fileout]
 # Método equiprobable -> seguridad perfecta
@@ -10,15 +16,75 @@ import sys
 
 # Otra posibilidad es usar la fórmula de Bayes
 
-# TODO
-def equiprobable(string):
-    pass
+
+## TO DO? Al ser equiprobable no puedes ejecutarlo varias
+## veces porque se repite la generacion de clave. Cambiarlo?
+def cipher_cesar(string, size, equi):
+
+    dic = DICC_ES
+
+    cipher = ''
+
+    # Con clave equiprobable
+    if equi:
+
+        # Obtenemos la key pseudo-generada
+        key = equiprobable(size)
+        #print(key)
+
+    # Con clave no equiprobable
+    else:
+
+        # Obtenemos la clave no random
+        key = no_equiprobable(size)
+
+    i = 0
+    length = len(key)
+    for ch in string:
+        
+        # Obtenemos valor a cifrar
+        mod = i % length
+
+        # Ciframos con la clave de forma iterativa
+        ciph = (dic.find(ch) + key[mod]) % ABEC_ES
+        cipher += dic[ciph]
+
+        i += 1
+
+    return cipher
+
+def equiprobable(size):
+
+    # Generamos semilla para los valores pseudoaleatorios
+    key = []
+    seed(1)
+    for i in range(0, size):
+
+        # Genera clave y redondea para ser integer
+        key.append(round(random()*27))
+
+    return key
 
 
+def no_equiprobable(size):
+    
+    # Generamos semilla para los valores pseudoaleatorios
+    key = []
+    seed(1)
+    for i in range(0, size):
 
-# TODO
-def no_equiprobable(string):
-    pass
+        # Generamos claves con probabilidades modificadas
+        if i%2 == 0:
+            key.append(17)
+
+        elif i%3 == 0:
+            key.append(6)
+
+        else:
+            # Genera clave y redondea para ser integer
+            key.append(round(random()*27))
+
+    return key
 
 
 
@@ -28,6 +94,7 @@ if __name__ == '__main__':
 
     parser.add_argument("-P", dest="-P", help="Se utiliza el método equiprobable.")
     parser.add_argument("-I", dest="-I", help="No se utiliza el método equiprobable.")
+    parser.add_argument("-s", dest="-s", nargs="+", type=int)
     parser.add_argument("-i", dest="-i", nargs="?", default="terminal", help="Especifica un archivo como input.")
     parser.add_argument("-o", dest="-o", nargs="?", default="terminal", help="Especifica un archivo como output.")
 
@@ -55,13 +122,17 @@ if __name__ == '__main__':
             res = no_equiprobable (string)
     # Si obtenemos desde la terminal
     else:
+        # Obtenemos size de clave a usar
+        size = args["-s"]
+
         if args["-P"] is not None:
             string = args["-P"] # ??? Es como scanf?
-            res = equiprobable (string)
+            res = cipher_cesar (string, size[0], True)
 
         else:
             string = args["-I"] # ??? Es como scanf?
-            res = no_equiprobable (string)
+            res = cipher_cesar (string, size[0], False)
+
 
     # La salida consistir´a en las probabilidades Pp(x) de los elementos de texto plano, y las probabilidades
     # condicionadas Pp(x|y) para cada elemento de texto plano y de texto cifrado, con el siguiente formato:
